@@ -16,5 +16,7 @@ internal class Country : Entity
         Name = Name;
         Continent = continent;
         States = states;
+        AddNotificationsFromValueObjects(name);
+        AddNotificationsFromValueObjects(states.Cast<Notifiable<Notification>>().ToList());
     }
 }

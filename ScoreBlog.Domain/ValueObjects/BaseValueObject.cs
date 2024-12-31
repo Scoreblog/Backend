@@ -2,11 +2,11 @@ using Flunt.Notifications;
 
 namespace ScoreBlog.Domain.ValueObjects;
 
-internal class BaseValueObject : Notifiable<Notification>
+internal abstract class BaseValueObject : Notifiable<Notification>
 {
     protected string  Key { get; }
-    
-    public BaseValueObject()
+
+    protected BaseValueObject()
     {
         Key = this.GetType().Name;
     }
