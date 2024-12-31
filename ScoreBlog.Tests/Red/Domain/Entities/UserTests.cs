@@ -12,7 +12,7 @@ public class UserTests
         var email = new Email("invalid-email"); // Email inválido
         var address = new Address(-1, "", "", ""); // Endereço inválido
         var birthDate = new BirthDate(DateTime.Today.AddDays(1)); // Data de nascimento no futuro
-        var user = new User(fullName, email, address, birthDate, true);
+        var user = new User(fullName, email, address, birthDate, true, new Password("teste"));
 
         // Act & Assert
         Assert.False(user.IsValid); // O objeto deve ser inválido

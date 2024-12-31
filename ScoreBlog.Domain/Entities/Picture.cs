@@ -25,6 +25,7 @@ internal class Picture : Entity
         
         AddNotificationsFromValueObjects(file, name);
         if (!IsValid) return;
+        
         File = file;
         Name = name;
         AwsKey = awsKey;

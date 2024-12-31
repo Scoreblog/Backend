@@ -13,7 +13,7 @@ internal class Country : Entity
 
     public Country(UniqueName name, EContinent continent, IList<State> states)
     {
-        Name = Name;
+        Name = name;
         Continent = continent;
         States = states;
         AddNotificationsFromValueObjects(name);

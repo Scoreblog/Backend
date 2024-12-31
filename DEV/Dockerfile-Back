@@ -1,0 +1,74 @@
+# Etapa de build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 as build
+
+# Instalar Python (necessário para AOT do WebAssembly)
+RUN apt-get update && apt-get install -y python3
+
+WORKDIR /usr/local/bin/presentation
+
+COPY . .
+
+RUN dotnet workload restore
+RUN dotnet workload install wasm-tools
+RUN dotnet restore
+RUN dotnet publish -c Release -o ./ScoreBlog.Presentation
+
+# Etapa de runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+WORKDIR /app
+
+# Instala o cliente PostgreSQL para diagnosticar a conexão
+RUN apt-get update && apt-get install -y postgresql-client
+
+# Definindo argumentos que serão passados durante a construção da imagem
+ARG AWS_KEY_ID
+ARG AWS_KEY_SECRET
+ARG AWS_REGION
+ARG DURATION_URL_TEMP_IMAGES
+ARG DURATION_URL_TEMP_VIDEOS
+ARG BUCKET_IMAGES
+ARG BUCKET_VIDEOS
+ARG ISDEVELOPMENT
+ARG FRONTEND_URL
+ARG BACKEND_URL
+ARG HOST_DATABASE
+ARG USERNAME_DATABASE
+ARG DATABASE
+ARG PASSWORD_DATABASE
+ARG PORT_DATABASE
+ARG SMTP_USER
+ARG SMTP_PASS
+
+# Configurações de ambiente (usando os argumentos passados para definir variáveis de ambiente)
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://0.0.0.0:5070
+ENV AWS_KEY_ID=${AWS_KEY_ID}
+ENV AWS_KEY_SECRET=${AWS_KEY_SECRET}
+ENV AWS_REGION=${AWS_REGION}
+ENV DURATION_URL_TEMP_IMAGES=${DURATION_URL_TEMP_IMAGES}
+ENV DURATION_URL_TEMP_VIDEOS=${DURATION_URL_TEMP_VIDEOS}
+ENV BUCKET_IMAGES=${BUCKET_IMAGES}
+ENV BUCKET_VIDEOS=${BUCKET_VIDEOS}
+ENV ISDEVELOPMENT=${ISDEVELOPMENT}
+ENV FRONTEND_URL=${FRONTEND_URL}
+ENV BACKEND_URL=${BACKEND_URL}
+ENV HOST_DATABASE=${HOST_DATABASE}
+ENV USERNAME_DATABASE=${USERNAME_DATABASE}
+ENV DATABASE=${DATABASE}
+ENV PASSWORD_DATABASE=${PASSWORD_DATABASE}
+ENV PORT_DATABASE=${PORT_DATABASE}
+ENV SMTP_USER=${SMTP_USER}
+ENV SMTP_PASS=${SMTP_PASS}
+
+# Copia os arquivos da etapa de build para a imagem final
+COPY --from=build /usr/local/bin/presentation/ScoreBlog.Presentation/ . 
+
+# Copia a pasta da infraestrutura que contém as migrations
+COPY --from=build /usr/local/bin/presentation/ScoreBlog.Infrastructure/ /app/ScoreBlog.Infrastructure/
+
+# Expõe a porta para comunicação externa
+EXPOSE 5070
+
+# Comando para rodar a aplicação
+CMD ["dotnet", "ScoreBlog.Presentation.dll"]

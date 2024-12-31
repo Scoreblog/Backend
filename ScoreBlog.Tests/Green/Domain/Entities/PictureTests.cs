@@ -7,13 +7,12 @@ public class PictureTests
     [Fact]
     public void Picture_Should_Be_Valid_When_Valid_Properties_Are_Provided()
     {
-        // Arrange
-        var fileContent = new byte[5000];  // Exemplo de conteúdo de arquivo válido (5KB)
+        var fileContent = new byte[5000];  
         var fileStream = new System.IO.MemoryStream(fileContent);
         var appFile = new AppFile(fileStream, "image.jpg");
         var name = new UniqueName("Picture1");
         var awsKey = "valid-aws-key";
-        var urlExpired = DateTime.Now.AddDays(1); // Data de expiração no futuro
+        var urlExpired = DateTime.Now.AddDays(1); 
         var urlTemp = "https://example.com/temp-image-url";
         var ativo = true;
 

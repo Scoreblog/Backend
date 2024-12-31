@@ -12,7 +12,8 @@ public class UserTests
         var email = new Email("john.doe@example.com");
         var address = new Address(123, "Downtown", "Main St", "Apt 101");
         var birthDate = new BirthDate(new DateTime(1990, 1, 1));
-        var user = new User(fullName, email, address, birthDate, true);
+        var password = new Password("teste");
+        var user = new User(fullName, email, address, birthDate, true, password);
         Assert.True(user.IsValid); 
     }
 }
